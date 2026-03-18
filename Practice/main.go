@@ -77,6 +77,7 @@ func main() {
 		var newUser []User
 		if err:=c.BindJSON(&newUser);err!=nil{
 			c.JSON(http.StatusBadRequest,gin.H{"error":"invalid"})
+			return
 		}
 		users = append(users, newUser...)
 		c.JSON(http.StatusOK,gin.H{

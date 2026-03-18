@@ -3,75 +3,48 @@ package main
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
-
-	// Create cookie store
-	store := cookie.NewStore([]byte("secret"))
-	r.Use(sessions.Sessions("mysession", store))
-
-	// LOGIN
-	r.POST("/login", func(c *gin.Context) {
+	store:=cookie.NewStore([]byte("secret"))
+	r.Use(sessions.Sessions("mysession",store))
+	r.POST("/login",func(c *gin.Context){
 		var data map[string]string
-
-		if err := c.BindJSON(&data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid data"})
+		if err:=c.BindJSON(&data);err!=nil{
+			c.JSON(http.StatusBadRequest,gin.H{"error":"invalid data"})
 			return
 		}
-
-		username := data["username"]
-		password := data["password"]
-
-		// simple check (demo)
-		if username != "admin" || password != "1234" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		username:=data["username"]
+		password:=data["password"]
+		if username!="shabin"||password!="1234"{
+			c.JSON(http.StatusUnauthorized,gin.H{"error":"unauthorized"})
 			return
 		}
-
-		// Create session
-		session := sessions.Default(c)
-		session.Set("user", username)
+		session:=sessions.Default(c)
+		session.Set("user",username)
 		session.Save()
 
-		// Also set cookie
-		c.SetCookie("user", username, 3600, "/", "localhost", false, true)
-
-		c.JSON(http.StatusOK, gin.H{
-			"message": "login successful",
-		})
+		c.SetCookie("user",username,3600,"/","localhost",false,true)
+		c.JSON(http.StatusOK,gin.H{"message":"logged in"})
 	})
-
-	// DASHBOARD (protected)
-	r.GET("/dashboard", func(c *gin.Context) {
-		session := sessions.Default(c)
-		user := session.Get("user")
-
-		if user == nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+	r.GET("/dashboard",func(c *gin.Context){
+		session:=sessions.Default(c)
+		user:=session.Get("user")
+		if user==nil{
+			c.JSON(http.StatusBadRequest,gin.H{"error":"no data found"})
 			return
 		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"message": "welcome " + user.(string),
-		})
+		c.JSON(http.StatusOK,gin.H{"message":"welcome "+user.(string)})
 	})
-
-	// LOGOUT
-	r.GET("/logout", func(c *gin.Context) {
-		session := sessions.Default(c)
+	r.GET("/logout",func(c *gin.Context){
+		session:=sessions.Default(c)
 		session.Clear()
 		session.Save()
-
-		c.JSON(http.StatusOK, gin.H{
-			"message": "logged out",
-		})
+		c.JSON(http.StatusOK,gin.H{"message":"logged out"})
 	})
-
-	r.Run(":2007")
+	r.Run()
 }
