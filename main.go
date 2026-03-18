@@ -95,81 +95,194 @@
 // }
 
 // Gin Methods
-package main
+// package main
 
+// import (
+// 	"net/http"
+// 	"strconv"
+
+// 	"github.com/gin-gonic/gin"
+// )
+
+// type User struct {
+// 	Id   int    `json:"id"`
+// 	Name string `json:"name"`
+// 	Age  int    `json:"age"`
+// }
+
+// var users = []User{
+// 	{Id: 1, Name: "shabin", Age: 19},
+// }
+// func getUser(c *gin.Context){
+// 	c.JSON(http.StatusOK,users)
+// }
+// func createUser(c *gin.Context) {
+// 	var newUser User
+// 	if err := c.BindJSON(&newUser); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid data"})
+// 		return
+// 	}
+// 	users = append(users, newUser)
+// 	c.JSON(http.StatusOK, gin.H{"message": newUser})
+// }
+// func UpdateUser(c *gin.Context) {
+// 	idParam := c.Param("id")
+// 	id, err := strconv.Atoi(idParam)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+// 		return
+// 	}
+// 	var update User
+// 	if err := c.BindJSON(&update); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid data"})
+// 		return
+// 	}
+// 	for i, user := range users {
+// 		if user.Id == id {
+// 			update.Id = id
+// 			users[i] = update
+// 			c.JSON(http.StatusOK, gin.H{"message": update})
+// 			return
+// 		}
+// 	}
+// 	c.JSON(http.StatusNotFound, gin.H{"error": "no user found"})
+// }
+// func Deleteuser(c *gin.Context) {
+// 	idParam := c.Param("id")
+// 	id, err := strconv.Atoi(idParam)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+// 		return
+// 	}
+// 	for i,user:=range users{
+// 		if user.Id==id{
+// 			users = append(users[:i], users[i+1:]...)
+// 			c.JSON(http.StatusOK,gin.H{"messgae":"user deleted"})
+// 			return
+// 		}
+// 	}
+// 	c.JSON(http.StatusNotFound,gin.H{"error":"no found user"})
+// }
+// func main() {
+// 	r := gin.Default()
+// 	api:=r.Group("/api")
+// 	api.GET("/user",getUser)
+// 	api.POST("/user",createUser)
+// 	api.PUT("/user",UpdateUser)
+// 	api.DELETE("/user",Deleteuser)
+// 	r.Run(":2000")
+// }
+
+// session and cookies
+// package main
+// import (
+// 	"net/http"
+
+// 	"github.com/gin-contrib/sessions"
+// 	"github.com/gin-contrib/sessions/cookie"
+// 	"github.com/gin-gonic/gin"
+// )
+
+// func main() {
+// 	r:=gin.Default()
+// 	store:=cookie.NewStore([]byte("secret"))
+// 	r.Use(sessions.Sessions("session",store))
+// 	r.POST("/login",func(c *gin.Context){
+// 		var data map[string]string
+// 		if err:=c.BindJSON(&data);err!=nil{
+// 			c.JSON(http.StatusBadRequest,gin.H{"error":"invalid data"})
+// 			return
+// 		}
+// 		username:=data["username"]
+// 		password:=data["password"]
+// 		if username!="shabin"||password!="1234"{
+// 			c.JSON(http.StatusUnauthorized,gin.H{"error":"not author"})
+// 			return
+// 		}
+// 		session:=sessions.Default(c)
+// 		session.Set("user",username)
+// 		session.Save()
+// 		c.SetCookie("session",username,3600,"/","localhost",false,true)
+// 		c.JSON(http.StatusOK,gin.H{"message":"logged in"})
+// 	})
+// 	r.GET("/dashboard",func(c *gin.Context){
+// 		session:=sessions.Default(c)
+// 		user:=session.Get("user")
+// 		if user==nil{
+// 			c.JSON(http.StatusOK,gin.H{"error":"no user"})
+// 			return
+// 		}
+// 		c.JSON(http.StatusOK,gin.H{"message":"welcome","name":user.(string)})
+// 	})
+// 	r.GET("/logout",func(c *gin.Context){
+// 		session:=sessions.Default(c)
+// 		session.Clear()
+// 		session.Save()
+// 		c.JSON(http.StatusOK,gin.H{"message":"logged out"})
+// 	})
+// 	r.Run(":2000")
+// }
+
+//login
+package main
 import (
 	"net/http"
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 )
-
-type User struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	Age  int    `json:"age"`
+var users =map[string]string{
+	"shabin":"1234",
 }
-
-var users = []User{
-	{Id: 1, Name: "shabin", Age: 19},
+func home(c *gin.Context){
+	c.String(200,"welcome sign in to dashboard")
 }
-func getUser(c *gin.Context){
-	c.JSON(http.StatusOK,users)
-}
-func createUser(c *gin.Context) {
-	var newUser User
-	if err := c.BindJSON(&newUser); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid data"})
-		return
-	}
-	users = append(users, newUser)
-	c.JSON(http.StatusOK, gin.H{"message": newUser})
-}
-func UpdateUser(c *gin.Context) {
-	idParam := c.Param("id")
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
-		return
-	}
-	var update User
-	if err := c.BindJSON(&update); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid data"})
-		return
-	}
-	for i, user := range users {
-		if user.Id == id {
-			update.Id = id
-			users[i] = update
-			c.JSON(http.StatusOK, gin.H{"message": update})
-			return
+func Auth()gin.HandlerFunc{
+	return func(c *gin.Context){
+		user,err:=c.Cookie("user")
+		if err!=nil||user==""{
+			c.JSON(http.StatusUnauthorized,gin.H{"error":"no authorized"})
+			c.Abort()
+			return 
 		}
+		c.Set("user",user)
+		c.Next()
 	}
-	c.JSON(http.StatusNotFound, gin.H{"error": "no user found"})
 }
-func Deleteuser(c *gin.Context) {
-	idParam := c.Param("id")
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+func logger(c *gin.Context){
+	var Login struct{
+		UserName string `json:"username" binding:"required,min=3"`
+		Password string `json:"passsword" binding:"required,min=4"`
+	}
+	if err:=c.ShouldBindJSON(&Login);err!=nil{
+		c.JSON(http.StatusBadRequest,gin.H{"error":"invalid data"})
 		return
 	}
-	for i,user:=range users{
-		if user.Id==id{
-			users = append(users[:i], users[i+1:]...)
-			c.JSON(http.StatusOK,gin.H{"messgae":"user deleted"})
-			return
-		}
+	if pass,ok:=users[Login.UserName];ok&&pass==Login.Password{
+		c.SetCookie("session",Login.UserName,3600,"/","localhost",false,true)
+		c.JSON(http.StatusOK,gin.H{"message":"logged in"})
+		return
 	}
-	c.JSON(http.StatusNotFound,gin.H{"error":"no found user"})
+	c.JSON(http.StatusUnauthorized,gin.H{"error":"not found"})
+}
+func logout(c *gin.Context){
+	c.SetCookie("session","",-1,"/","localhost",false,true)
+	c.JSON(http.StatusOK,gin.H{"messgae":"logged out"})
+}
+func dashboard(c *gin.Context){
+	user,_:=c.Get("user")
+	c.JSON(http.StatusOK,gin.H{
+		"message":"welcome",
+		"user":user,
+	})
 }
 func main() {
-	r := gin.Default()
-	api:=r.Group("/api")
-	api.GET("/user",getUser)
-	api.POST("/user",createUser)
-	api.PUT("/user",UpdateUser)
-	api.DELETE("/user",Deleteuser)
-	r.Run(":2000")	
+	r:=gin.Default()
+	public:=r.Group("/")
+	public.GET("/",home)
+	public.POST("/login",logger)
+	public.GET("/logout",logout)
+	protect:=r.Group("/dashboard")
+	protect.Use(Auth())
+	protect.GET("/",dashboard)
+	r.Run(":2007")
 
 }
