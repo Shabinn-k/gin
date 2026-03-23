@@ -39,6 +39,7 @@
 //	}
 
 package main
+
 import (
 	"net/http"
 	"strconv"
@@ -86,7 +87,7 @@ func updateUser(c *gin.Context) {
 	for i, user := range users {
 		if user.Id == id {
 			Update.Id = id
-			users[i]=Update
+			users[i] = Update
 			c.JSON(http.StatusOK, gin.H{"message": Update})
 			return
 		}

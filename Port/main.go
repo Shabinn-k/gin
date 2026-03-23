@@ -9,7 +9,6 @@ import (
 type User struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
-	
 }
 
 var users []User
@@ -25,7 +24,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		users = append(users, newUser)
-		json.NewEncoder(w ).Encode(newUser)
+		json.NewEncoder(w).Encode(newUser)
 		fmt.Println("User created")
 	case "PUT":
 		var updateUser User
