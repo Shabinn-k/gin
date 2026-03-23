@@ -83,13 +83,12 @@
 // 		c.JSON(http.StatusOK,gin.H{
 // 			"message":newUser,
 // 		})
-// 	})	
+// 	})
 // 	r.GET("/",func(c *gin.Context){
-// 		c.String(200,"hello world")		
+// 		c.String(200,"hello world")
 // 	})
 // 	r.Run()
 // }
- 
 
 package main
 
@@ -110,7 +109,7 @@ func main() {
 		"password": "password123",
 	}
 	jsonData, _ := json.Marshal(registerData)
-	
+
 	resp, err := http.Post("http://localhost:8080/api/register", "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Printf("Register error: %v\n", err)
@@ -119,7 +118,7 @@ func main() {
 	body, _ := io.ReadAll(resp.Body)
 	fmt.Printf("Register Status: %d, Response: %s\n\n", resp.StatusCode, string(body))
 	resp.Body.Close()
-	
+
 	// Then login with the same credentials
 	fmt.Println("2. Logging in...")
 	loginData := map[string]string{
@@ -127,7 +126,7 @@ func main() {
 		"password": "password123",
 	}
 	jsonData, _ = json.Marshal(loginData)
-	
+
 	resp, err = http.Post("http://localhost:8080/api/login", "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Printf("Login error: %v\n", err)
