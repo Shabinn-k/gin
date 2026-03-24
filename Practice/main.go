@@ -1,62 +1,66 @@
 // http Method
 package main
+
 import (
 	"encoding/json"
 	"net/http"
 )
-type User struct{
-	Id int `json:"id"`
+
+type User struct {
+	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
+
 var users []User
-func userHandle(w http.ResponseWriter,r *http.Request){
-	switch r.Method{
+
+func userHandle(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
 	case "GET":
 		json.NewEncoder(w).Encode(users)
 	case "POST":
 		var newUser User
-		if err:=json.NewDecoder(r.Body).Decode(&newUser);err!=nil{
-			http.Error(w,"invalid data",http.StatusBadRequest)
+		if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
+			http.Error(w, "invalid data", http.StatusBadRequest)
 			return
 		}
-		users=append(users, newUser)
+		users = append(users, newUser)
 		json.NewEncoder(w).Encode(newUser)
 	case "PUT":
 		var updateUser User
-		if err:=json.NewDecoder(r.Body).Decode(&updateUser);err!=nil{
-			http.Error(w,"invalid data",http.StatusBadRequest)
+		if err := json.NewDecoder(r.Body).Decode(&updateUser); err != nil {
+			http.Error(w, "invalid data", http.StatusBadRequest)
 			return
 		}
-		for i,user:=range users{
-			if user.Id==updateUser.Id{
-				users[i]=updateUser
+		for i, user := range users {
+			if user.Id == updateUser.Id {
+				users[i] = updateUser
 				json.NewEncoder(w).Encode(updateUser)
 				return
 			}
 		}
-		http.Error(w,"user not found",http.StatusNotFound)
+		http.Error(w, "user not found", http.StatusNotFound)
 	case "DELETE":
 		var del User
-		if err:=json.NewDecoder(r.Body).Decode(&del);err!=nil{
-			http.Error(w,"invalid data",http.StatusBadRequest)
+		if err := json.NewDecoder(r.Body).Decode(&del); err != nil {
+			http.Error(w, "invalid data", http.StatusBadRequest)
 			return
 		}
-		for i,user:=range users{
-			if user.Id==del.Id{
-				users = append(users[:i],users[i+1:]... )
-				json.NewEncoder(w).Encode(map[string]string{"message":"user deleted"})
+		for i, user := range users {
+			if user.Id == del.Id {
+				users = append(users[:i], users[i+1:]...)
+				json.NewEncoder(w).Encode(map[string]string{"message": "user deleted"})
 				return
 			}
 		}
 		http.Error(w, "user not found", http.StatusNotFound)
 	default:
-		http.Error(w,"not allowed",http.StatusMethodNotAllowed)
+		http.Error(w, "not allowed", http.StatusMethodNotAllowed)
 	}
 
 }
-func main(){
-	http.HandleFunc("/user",userHandle)
-	http.ListenAndServe(":2007",nil)
+func main() {
+	http.HandleFunc("/user", userHandle)
+	http.ListenAndServe(":2007", nil)
 }
 
 // hash password and compare
@@ -239,7 +243,7 @@ func main(){
 // 		if err!=nil||user==""{
 // 			c.JSON(http.StatusUnauthorized,gin.H{"error":"no authorized"})
 // 			c.Abort()
-// 			return 
+// 			return
 // 		}
 // 		c.Set("user",user)
 // 		c.Next()
