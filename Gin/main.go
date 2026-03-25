@@ -114,10 +114,12 @@ func deleteUser(c *gin.Context) {
 func main() {
 	r := gin.Default()
 	api := r.Group("/api")
+	
 	api.GET("/user", getUser)
 	api.POST("/user", createUser)
+
 	api.PUT("/user/:id", updateUser)
 	api.DELETE("/user/:id", deleteUser)
 	r.Run(":2007")
-	
+
 }
