@@ -11,6 +11,7 @@ import (
 func main() {
 	r := gin.Default()
 	store := cookie.NewStore([]byte("secret"))
+	
 	r.Use(sessions.Sessions("mysession", store))
 	r.POST("/login", func(c *gin.Context) {
 		var data map[string]string
